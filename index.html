@@ -293,7 +293,7 @@
     .chat-input {
       display: flex;
       align-items: center;
-      padding: 16px 24px;
+      padding: 1px 4px;
       background: #ffffff;
       border-top: 1px solid var(--ion-color-border);
       gap: 12px;
@@ -354,8 +354,8 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-button fill="clear" color="dark" id="back-button">
-            <i data-lucide="chevron-left"></i>
+          <ion-button fill="clear" color="dark" id="profile-button">
+            <i data-lucide="user-round"></i>
           </ion-button>
         </ion-buttons>
         <ion-title>AI Assistant</ion-title>
@@ -626,7 +626,7 @@
       } catch (err) {
         console.error(err);
         hideTypingIndicator();
-        addMessage(`❌ Gagal terhubung ke AI (${err.message}). Periksa URL Worker Anda di variabel WORKER_URL.`, false);
+        addMessage(`❄1�7 Gagal terhubung ke AI (${err.message}). Periksa URL Worker Anda di variabel WORKER_URL.`, false);
       } finally {
         isLoading = false;
         sendBtn.disabled = false;
@@ -650,8 +650,8 @@
 
     setTimeout(() => messageInput.setFocus(), 100);
 
-    document.getElementById('back-button')?.addEventListener('click', () => {
-      showToast('Navigasi kembali (Sedang di kerjakan)');
+    document.getElementById('profile-button')?.addEventListener('click', () => {
+      showToast('User Profile (Sedang di kerjakan)');
     });
     document.getElementById('menu-button')?.addEventListener('click', () => {
       showToast('Pengaturan Asisten (sedang di kerjakan)');
