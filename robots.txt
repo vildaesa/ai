@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /*?token=*
+Disallow: /*code=*
+Sitemap: https://vildaesa.github.io/ai/sitemap.xml
