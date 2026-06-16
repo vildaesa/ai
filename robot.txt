@@ -1,0 +1,10 @@
+# ============================================================
+# Robots.txt - Mengarahkan Search Engine Utama
+# ============================================================
+User-agent: *
+Allow: /
+# Batasi agar search engine tidak mengindeks file token kembalian OAuth GitHub
+Disallow: /*?token=*
+Disallow: /*code=*
+# Peta Situs
+Sitemap: https://vildaesa.github.io/ai/sitemap.xml
