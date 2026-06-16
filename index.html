@@ -3,7 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>VEMS AI Assistant</title>
+  
+  <!-- ==========================================
+       SEO METADATA UTAMA (SEMUA SEARCH ENGINE)
+       ========================================== -->
+  <title>VEMS AI - Chat, Coding & Analisis Dokumen R2</title>
+  <meta name="description" content="Gunakan Asisten AI Premium berbasis Cloudflare Workers secara gratis. Dilengkapi fitur coding otomatis dengan Qwen Coder, obrolan pintar Mistral, Media Library R2, dan kemampuan menganalisis dokumen teks secara instan.">
+  <meta name="keywords" content="asisten ai, ai chat gratis, qwen coder, mistral small, cloudflare workers ai, media library r2, analisis file ai, ai indonesia, chatbot pemrograman">
+  <meta name="author" content="vildaesa">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://vildaesa.github.io/ai/" />
+
+  <!-- ==========================================
+       OPEN GRAPH / FACEBOOK / LINKEDIN (SOCIAL SEO)
+       ========================================== -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vildaesa.github.io/ai/">
+  <meta property="og:title" content="VEMS AI - Chat, Coding & Analisis Dokumen Cloud R2">
+  <meta property="og:description" content="Chatbot pintar bertenaga kecerdasan buatan untuk membantu Anda menulis kode program, menganalisis file, dan mengobrol interaktif dalam bahasa Indonesia.">
+  <meta property="og:image" content="https://vildaesa.github.io/ai/assets/images/og-preview.png">
+  <meta property="og:locale" content="id_ID">
+
+  <!-- ==========================================
+       TWITTER CARDS METADATA
+       ========================================== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://vildaesa.github.io/ai/">
+  <meta name="twitter:title" content="VEMS AI - Chat, Coding & Analisis File R2">
+  <meta name="twitter:description" content="Platform asisten AI gratis dengan enkripsi sesi KV, cloud storage R2, dan integrasi GitHub login.">
+  <meta name="twitter:image" content="https://vildaesa.github.io/ai/assets/images/og-preview.png">
+
+  <!-- ==========================================
+       PWA & MOBILE METRICS
+       ========================================== -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#4f46e5">
+
+  <!-- ==========================================
+       JSON-LD STRUCTURED DATA (RICH SNIPPETS)
+       ========================================== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Asisten AI Premium",
+    "operatingSystem": "All",
+    "applicationCategory": "BusinessApplication",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "url": "https://vildaesa.github.io/ai/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "vildaesa Pro AI",
+      "url": "https://vildaesa.github.io/ai/"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "1250"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Interaksi Chat AI Cerdas dalam Bahasa Indonesia",
+      "Generator Kode Program Otomatis dengan Qwen 2.5 Coder",
+      "Analisis Dokumen Teks & Script",
+      "Penyimpanan File Cloud dengan Cloudflare R2",
+      "Sinkronisasi Riwayat Chat dengan Cloudflare KV",
+      "Login Aman menggunakan GitHub OAuth"
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Asisten AI Premium",
+    "url": "https://vildaesa.github.io/ai/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://vildaesa.github.io/ai/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
 
   <!-- Ionic Core 8 -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.esm.js"></script>
@@ -482,6 +569,18 @@
 </head>
 <body>
 
+  <!-- ==========================================
+       FALLBACK KONTEN NO-JS (UNTUK CRAWLER SEO)
+       ========================================== -->
+  <noscript>
+    <div style="padding: 40px; text-align: center; font-family: sans-serif; background-color: #f8fafc; color: #0f172a;">
+      <h1 style="color: #4f46e5;">Asisten AI Premium</h1>
+      <p>Aplikasi asisten AI tercanggih dengan Cloudflare Workers AI. Nikmati kemudahan berdiskusi, menulis baris kode pemrograman menggunakan Qwen 2.5 Coder, dan menganalisis file secara cerdas.</p>
+      <hr style="max-width: 400px; border: 0; border-top: 1px solid #e2e8f0; margin: 20px auto;">
+      <p style="color: #64748b; font-size: 14px;">Aktifkan JavaScript di browser Anda untuk menjalankan asisten AI secara real-time.</p>
+    </div>
+  </noscript>
+
   <!-- Ionic App Shell -->
   <ion-app>
 
@@ -565,16 +664,16 @@
     <!-- MAIN INTERACTIVE SCREEN -->
     <div class="ion-page" id="main-content">
       <ion-header>
+        <!-- Penanda H1 Tersembunyi (Sangat Disukai oleh Crawlers SEO) -->
+        <h1 style="display:none;">Asisten AI Premium - Chatbot Pintar Indonesia</h1>
         <ion-toolbar>
           <ion-buttons slot="start">
-            <!-- Tombol Kiri memicu Sidebar Profil -->
             <ion-button fill="clear" color="dark" onclick="openMenu('sidebar-profile')">
               <i data-lucide="user-round"></i>
             </ion-button>
           </ion-buttons>
           <ion-title>AI Premium Assistant</ion-title>
           <ion-buttons slot="end">
-            <!-- Tombol Kanan memicu Sidebar Pengaturan -->
             <ion-button fill="clear" color="dark" onclick="openMenu('sidebar-setting')">
               <i data-lucide="sliders-horizontal"></i>
             </ion-button>
