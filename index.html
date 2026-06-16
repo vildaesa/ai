@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>AI Chat</title>
+  <title>AI Premium Assistant</title>
 
   <!-- Ionic Core 8 -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.esm.js"></script>
@@ -19,59 +19,1372 @@
   <!-- Google Fonts: Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Link ke CSS Eksternal -->
-  <link rel="stylesheet" href="./assets/css/style.css" />
+  <style>
+    :root {
+      --ion-color-primary: #4f46e5;
+      --ion-color-primary-shade: #4338ca;
+      --ion-color-light: #f8fafc;
+      --ion-color-dark: #0f172a;
+      --ion-color-medium: #64748b;
+      --ion-color-border: #e2e8f0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+    }
+
+    ion-header {
+      --background: #ffffff;
+      --color: var(--ion-color-dark);
+      box-shadow: none;
+      border-bottom: 1px solid var(--ion-color-border);
+    }
+
+    ion-toolbar {
+      --border-style: none;
+      --padding-top: 6px;
+      --padding-bottom: 6px;
+    }
+
+    ion-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    ion-content {
+      --background: #ffffff;
+    }
+
+    /* Layout Chat Tanpa Balon (Modern & Flat) */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 16px 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Message Row (Flat Layout) */
+    .message-row {
+      display: flex;
+      padding: 24px 0;
+      border-bottom: 1px solid #f1f5f9;
+      gap: 16px;
+      align-items: flex-start;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Modifikasi posisi User di sebelah kanan */
+    .message-row.user-row {
+      flex-direction: row-reverse;
+      background-color: #ffffff;
+    }
+
+    .message-row.user-row .message-content-wrapper {
+      text-align: right;
+    }
+
+    .message-row.user-row .message-header {
+      flex-direction: row-reverse;
+    }
+
+    .message-row.ai-row {
+      background-color: #fafafa;
+      margin-left: -24px;
+      margin-right: -24px;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    /* Avatar */
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .avatar-user {
+      background-color: #e0e7ff;
+      color: #4f46e5;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .avatar-ai {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Message Content Area */
+    .message-content-wrapper {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .sender-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ion-color-dark);
+    }
+
+    .meta-badge {
+      font-size: 11px;
+      color: var(--ion-color-medium);
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .message-body {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #334155;
+      word-break: break-word;
+    }
+
+    .message-body p {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .message-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Code Block Wrapper */
+    .code-block-wrapper {
+      margin: 16px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #334155;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-align: left;
+    }
+
+    .code-header {
+      background-color: #1e1e2e;
+      color: #a6adc8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: monospace;
+      border-bottom: 1px solid #313244;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: none;
+      color: #a6adc8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background-color: #313244;
+      color: #cdd6f4;
+    }
+
+    .copy-btn i {
+      width: 14px;
+      height: 14px;
+    }
+
+    .message-body pre {
+      background: #151521;
+      color: #cdd6f4;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message-body code {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f1f5f9;
+      color: #e11d48;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .message-body pre code {
+      background-color: transparent;
+      color: inherit;
+      padding: 0;
+      border-radius: 0;
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px dashed #f1f5f9;
+    }
+
+    .user-row .message-actions {
+      justify-content: flex-end;
+    }
+
+    .text-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--ion-color-medium);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #f1f5f9;
+      transition: all 0.2s;
+    }
+
+    .text-action-btn:hover {
+      color: var(--ion-color-primary);
+      background-color: #e0e7ff;
+    }
+
+    .text-action-btn i {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Attached Context Pill */
+    .attached-context-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    /* Active Context Indicator on Input Bar */
+    .active-file-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #eff6ff;
+      border-top: 1px solid #bfdbfe;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: #1e40af;
+    }
+
+    .active-file-indicator button {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Chat Input Area */
+    .chat-input {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #ffffff;
+      border-top: 1px solid var(--ion-color-border);
+      gap: 12px;
+    }
+
+    ion-input {
+      flex: 1;
+      --background: #f1f5f9;
+      --border-radius: 24px;
+      --padding-start: 20px;
+      --padding-end: 20px;
+      --placeholder-color: #64748b;
+      font-size: 15px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #4f46e5;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: #f1f5f9;
+    }
+
+    ion-button {
+      --border-radius: 16%;
+      height: 48px;
+      width: 48px;
+      --padding-start: 0;
+      --padding-end: 0;
+    }
+
+    /* Media Library Styles */
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .media-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 140px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .media-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .media-icon {
+      font-size: 32px;
+      color: #4f46e5;
+      margin-bottom: 8px;
+    }
+
+    .media-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: #1e293b;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .media-actions-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    .media-actions-row button {
+      flex: 1;
+      font-size: 10px;
+      padding: 4px 2px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-attach {
+      background: #e0e7ff;
+      color: #4f46e5;
+    }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: #ef4444;
+    }
+
+    .locked-upload-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: #fafafa;
+      border: 2px dashed #e2e8f0;
+      border-radius: 16px;
+      margin: 16px;
+      text-align: center;
+    }
+
+    /* Loading Indicator */
+    .loading-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--ion-color-primary);
+      border-radius: 50%;
+      display: inline-block;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .dot:nth-child(1) { animation-delay: -0.32s; }
+    .dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1.0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
 
+  <!-- Ionic App Shell -->
   <ion-app>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-button fill="clear" color="dark" id="profile-button">
-            <i data-lucide="user-round"></i>
-          </ion-button>
-        </ion-buttons>
-        <ion-title>AI Assistant</ion-title>
-        <ion-buttons slot="end">
-          <ion-button fill="clear" color="dark" id="menu-button">
-            <i data-lucide="sliders-horizontal"></i>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
 
-    <ion-content>
-      <div class="chat-container">
-        <div class="chat-messages" id="chatMessages">
+    <!-- SIDEBAR KIRI (PROFILE / ACCOUNT MENU) -->
+    <ion-menu content-id="main-content" side="start" id="sidebar-profile">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Akun Saya</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <!-- Area Pengguna Belum Login -->
+        <div id="auth-logged-out" class="ion-text-center ion-padding" style="display: block;">
+          <div class="ion-padding-bottom">
+            <i data-lucide="user" style="width: 64px; height: 64px; margin: 0 auto; color: #94a3b8;"></i>
+          </div>
+          <h3>Masuk ke AI Assistant</h3>
+          <p style="color: #64748b; font-size: 14px;">Silakan login dengan GitHub untuk membuka fitur simpan riwayat chat, media library, dan unggah berkas (R2).</p>
+          <ion-button expand="block" color="dark" id="btn-login-github" style="margin-top: 24px;">
+            <i data-lucide="github" style="margin-right: 8px;"></i> Login via GitHub
+          </ion-button>
+        </div>
 
-          <div class="message-row ai-row">
-            <div class="avatar avatar-ai">AI</div>
-            <div class="message-content-wrapper">
-              <div class="message-header">
-                <span class="sender-name">Asisten AI</span>
-              </div>
-              <div class="message-body">
-                👋 Halo! Saya asisten AI. Kirim pesan apa saja. Anda bisa meminta saya membuat kode program, merancang antarmuka UI, menjelaskan konsep, atau mengobrol santai.
+        <!-- Area Pengguna Sudah Login -->
+        <div id="auth-logged-in" class="ion-padding" style="display: none;">
+          <div class="ion-text-center ion-padding-bottom" style="border-bottom: 1px solid #f1f5f9;">
+            <div id="user-avatar-display" style="width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 12px auto; background-color: #e2e8f0; background-size: cover;"></div>
+            <h4 id="user-name-display" style="margin: 0; font-weight: 700;">Pengguna</h4>
+            <p id="user-login-display" style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">@username</p>
+          </div>
+
+          <ion-list lines="none" style="margin-top: 16px;">
+            <ion-item button id="btn-show-media">
+              <i data-lucide="folder-open" slot="start" style="color: #4f46e5;"></i>
+              <ion-label>Media Library</ion-label>
+            </ion-item>
+            <ion-item button id="btn-clear-chats-history">
+              <i data-lucide="trash-2" slot="start" style="color: #ef4444;"></i>
+              <ion-label style="color: #ef4444;">Hapus Riwayat Chat</ion-label>
+            </ion-item>
+          </ion-list>
+
+          <ion-button expand="block" color="danger" fill="outline" id="btn-logout" style="margin-top: 40px;">
+            <i data-lucide="log-out" style="margin-right: 8px;"></i> Keluar
+          </ion-button>
+        </div>
+      </ion-content>
+    </ion-menu>
+
+    <!-- SIDEBAR KANAN (SETTING MENU) -->
+    <ion-menu content-id="main-content" side="end" id="sidebar-setting">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Pengaturan</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <h5 style="font-weight: 600; margin-top: 8px;">Pengaturan Chat</h5>
+        <p style="font-size: 13px; color: #64748b;">Konfigurasikan asisten kecerdasan buatan Anda agar optimal dalam menjawab segala pertanyaan.</p>
+
+        <ion-list lines="inset" style="background: transparent;">
+          <ion-item>
+            <ion-select label="Model Pilihan Utama" interface="popover" placeholder="Pilih Model" value="auto" id="select-ai-model">
+              <ion-select-option value="auto">Deteksi Otomatis (Cerdas)</ion-select-option>
+              <ion-select-option value="mistral">Mistral Small (Obrolan & Konseptual)</ion-select-option>
+              <ion-select-option value="qwen">Qwen Coder (Pemrograman & Antarmuka)</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-toggle id="toggle-markdown-preview" checked="true" justify="space-between">Render Markdown</ion-toggle>
+          </ion-item>
+        </ion-list>
+
+        <div style="background-color: #f1f5f9; border-radius: 12px; padding: 12px; margin-top: 24px; font-size: 12px; color: #475569;">
+          <strong>Tip Analisis Berkas:</strong> Anda bisa mengunggah file txt/pdf ke Media Library, lalu klik "Lampirkan" untuk menyertakan berkas ke dalam percakapan dengan AI!
+        </div>
+      </ion-content>
+    </ion-menu>
+
+    <!-- MAIN INTERACTIVE SCREEN -->
+    <div class="ion-page" id="main-content">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <!-- Tombol Kiri memicu Sidebar Profil -->
+            <ion-button fill="clear" color="dark" onclick="openMenu('sidebar-profile')">
+              <i data-lucide="user-round"></i>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>AI Premium Assistant</ion-title>
+          <ion-buttons slot="end">
+            <!-- Tombol Kanan memicu Sidebar Pengaturan -->
+            <ion-button fill="clear" color="dark" onclick="openMenu('sidebar-setting')">
+              <i data-lucide="sliders-horizontal"></i>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <div class="chat-container">
+          <!-- Area Percakapan Utama -->
+          <div class="chat-messages" id="chatMessages">
+            <div class="message-row ai-row">
+              <div class="avatar avatar-ai">AI</div>
+              <div class="message-content-wrapper">
+                <div class="message-header">
+                  <span class="sender-name">Asisten AI</span>
+                </div>
+                <div class="message-body">
+                  👋 Halo! Saya asisten AI. Kirim pesan apa saja. Anda bisa meminta saya membuat kode program, merancang antarmuka UI, menjelaskan konsep, atau mengobrol santai. 
+                  <br><br>
+                  <em>Masuk menggunakan akun GitHub untuk mengaktifkan fitur Media Library, R2 Cloud Storage, dan melampirkan berkas langsung untuk dianalisis oleh AI secara instan!</em>
+                </div>
               </div>
             </div>
           </div>
 
+          <!-- Indikator Berkas Aktif yang Sedang Dilampirkan -->
+          <div id="attached-file-bar" class="active-file-indicator" style="display: none;">
+            <span>📂 Melampirkan berkas analisis: <strong id="attached-file-name">None</strong></span>
+            <button onclick="detachFile()">Batal Lampirkan</button>
+          </div>
+
+          <!-- Area Input Form -->
+          <div class="chat-input">
+            <!-- Input file hidden -->
+            <input type="file" id="direct-file-input" style="display: none;" onchange="handleDirectUpload(event)">
+            <button class="icon-btn" onclick="triggerFileUpload()" id="btn-direct-upload" title="Unggah & Lampirkan File">
+              <i data-lucide="paperclip"></i>
+            </button>
+            <ion-input id="messageInput" placeholder="Tanya sesuatu kepada AI..." clear-input></ion-input>
+            <ion-button fill="solid" color="primary" id="sendButton">
+              <i data-lucide="send"></i>
+            </ion-button>
+          </div>
+        </div>
+      </ion-content>
+    </div>
+
+    <!-- MODAL POPUP: MEDIA LIBRARY -->
+    <ion-modal id="media-library-modal" trigger="btn-show-media">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Media Library (R2)</ion-title>
+          <ion-buttons slot="end">
+            <ion-button onclick="closeModal('media-library-modal')">Tutup</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <!-- Panel Upload Terkunci jika belum Login -->
+        <div id="upload-locked-panel" class="locked-upload-panel" style="display: block;">
+          <i data-lucide="lock" style="width: 48px; height: 48px; color: #ef4444; margin-bottom: 12px;"></i>
+          <h5>Akses Unggah Ditutup</h5>
+          <p style="color: #64748b; font-size: 13px; max-width: 320px;">Silakan login terlebih dahulu untuk mengakses penyimpanan Cloud R2 dan mengunggah berkas.</p>
         </div>
 
-        <div class="chat-input">
-          <ion-input id="messageInput" placeholder="Tanya sesuatu kepada AI..." clear-input></ion-input>
-          <ion-button fill="solid" color="primary" id="sendButton">
-            <i data-lucide="send"></i>
-          </ion-button>
+        <!-- Panel Upload Terbuka jika sudah login -->
+        <div id="upload-active-panel" style="display: none; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; font-size: 14px;">Unggah Dokumen Baru (txt, js, html, md, dll)</label>
+            <input type="file" id="modal-file-selector" class="ion-padding-vertical">
+            <ion-button size="small" id="btn-modal-upload-action">
+              <i data-lucide="upload-cloud" style="margin-right: 6px;"></i> Mulai Unggah ke R2
+            </ion-button>
+          </div>
         </div>
-      </div>
-    </ion-content>
 
+        <!-- List Dokumen R2 -->
+        <h5 style="font-weight: 600; margin-left: 16px;">Semua Berkas Saya</h5>
+        <div id="media-files-container" class="media-grid">
+          <!-- Item media akan dimasukkan via JavaScript -->
+          <p style="text-align: center; color: #94a3b8; font-size: 14px; grid-column: 1/-1;">Sedang mengambil data file berkas...</p>
+        </div>
+      </ion-content>
+    </ion-modal>
+
+    <!-- Toast Notification -->
     <ion-toast id="infoToast" message="" duration="2000" position="bottom" color="dark"></ion-toast>
   </ion-app>
 
-  <!-- Link ke JS Eksternal -->
-  <script src="./assets/js/app.js" defer></script>
+  <!-- KODE UTAMA APLIKASI (LOGIKA) -->
+  <script>
+    const WORKER_URL = "https://ai-coder.vildaesa.workers.dev";
+
+    // State Manajemen Global
+    let isLoading = false;
+    let currentUser = null;
+    let userToken = null;
+    let attachedFileContent = null;
+    let attachedFileName = "";
+    let chatHistory = [];
+
+    // Referensi Elemen DOM
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageInput = document.querySelector('#messageInput');
+    const sendBtn = document.querySelector('#sendButton');
+    const toast = document.getElementById('infoToast');
+
+    // Sidebar & Autentikasi Elemen
+    const authLoggedOut = document.getElementById('auth-logged-out');
+    const authLoggedIn = document.getElementById('auth-logged-in');
+    const userAvatarDisplay = document.getElementById('user-avatar-display');
+    const userNameDisplay = document.getElementById('user-name-display');
+    const userLoginDisplay = document.getElementById('user-login-display');
+
+    // Panel Upload R2
+    const uploadLockedPanel = document.getElementById('upload-locked-panel');
+    const uploadActivePanel = document.getElementById('upload-active-panel');
+    const mediaFilesContainer = document.getElementById('media-files-container');
+
+    // Konfigurasi Markdown Parser Custom
+    const renderer = new marked.Renderer();
+    renderer.code = function(codeOrToken, language) {
+      let code = '';
+      let validLang = 'code';
+
+      if (typeof codeOrToken === 'object' && codeOrToken !== null) {
+        code = codeOrToken.text || '';
+        validLang = codeOrToken.lang || 'code';
+      } else {
+        code = codeOrToken || '';
+        validLang = language || 'code';
+      }
+
+      const escapedCode = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+      return `
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span>${validLang.toUpperCase()}</span>
+            <button class="copy-btn" onclick="copyCodeBlock(this)">
+              <i data-lucide="copy"></i>
+            </button>
+          </div>
+          <pre><code class="language-${validLang}">${escapedCode}</code></pre>
+        </div>
+      `;
+    };
+    marked.setOptions({ renderer: renderer });
+
+    function renderMarkdown(text) {
+      if (!text) return '';
+      const toggleMarkdown = document.getElementById('toggle-markdown-preview');
+      const shouldRender = toggleMarkdown ? toggleMarkdown.checked : true;
+      if (shouldRender && typeof marked !== 'undefined') {
+        const rawHtml = marked.parse(text);
+        return DOMPurify.sanitize(rawHtml);
+      }
+      return DOMPurify.sanitize(text).replace(/\n/g, '<br>');
+    }
+
+    // Helper untuk interaksi Ionic Menu
+    async function openMenu(menuId) {
+      const menuCtrl = document.querySelector('ion-menu-controller');
+      if (menuCtrl) {
+        await menuCtrl.open(menuId);
+      } else {
+        const menu = document.getElementById(menuId);
+        if (menu) menu.open();
+      }
+    }
+
+    async function closeMenu(menuId) {
+      const menu = document.getElementById(menuId);
+      if (menu) await menu.close();
+    }
+
+    async function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) await modal.dismiss();
+    }
+
+    function showToast(message) {
+      if (toast) {
+        toast.message = message;
+        toast.present();
+      }
+    }
+
+    // ==========================================
+    // INTRASISTEM AUTENTIKASI GITHUB
+    // ==========================================
+    async function checkUserSession() {
+      // Ambil token dari URL jika ada (setelah redirect GitHub callback)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlToken = urlParams.get('token');
+
+      if (urlToken) {
+        localStorage.setItem('ai_session_token', urlToken);
+        // Hilangkan token dari URL bar untuk kerapihan tampilan
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      userToken = localStorage.getItem('ai_session_token');
+
+      if (!userToken) {
+        setLoggedOutUI();
+        return;
+      }
+
+      try {
+        const res = await fetch(`${WORKER_URL}/api/auth/me`, {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        const data = await res.json();
+
+        if (data.authenticated) {
+          currentUser = data.user;
+          setLoggedInUI(data.user);
+          loadChatHistory();
+        } else {
+          localStorage.removeItem('ai_session_token');
+          setLoggedOutUI();
+        }
+      } catch (err) {
+        console.error("Gagal memeriksa sesi user:", err);
+        setLoggedOutUI();
+      }
+    }
+
+    function setLoggedInUI(user) {
+      authLoggedOut.style.display = 'none';
+      authLoggedIn.style.display = 'block';
+      uploadLockedPanel.style.display = 'none';
+      uploadActivePanel.style.display = 'block';
+
+      userNameDisplay.innerText = user.name;
+      userLoginDisplay.innerText = `@${user.login}`;
+      if (user.avatar) {
+        userAvatarDisplay.style.backgroundImage = `url('${user.avatar}')`;
+      }
+
+      // Aktifkan visual klip unggah berkas
+      const directUploadBtn = document.getElementById('btn-direct-upload');
+      if (directUploadBtn) directUploadBtn.style.color = '#4f46e5';
+
+      fetchMediaLibrary();
+      setTimeout(() => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }, 300);
+    }
+
+    function setLoggedOutUI() {
+      authLoggedOut.style.display = 'block';
+      authLoggedIn.style.display = 'none';
+      uploadLockedPanel.style.display = 'block';
+      uploadActivePanel.style.display = 'none';
+      currentUser = null;
+      userToken = null;
+
+      // Matikan visual tombol upload bagi yang belum login
+      const directUploadBtn = document.getElementById('btn-direct-upload');
+      if (directUploadBtn) {
+        directUploadBtn.style.color = '#94a3b8';
+      }
+
+      // Kosongkan library media kontainer
+      mediaFilesContainer.innerHTML = `<p style="text-align: center; color: #94a3b8; font-size: 14px; grid-column: 1/-1;">Kunci R2 aktif. Silakan login untuk melihat file.</p>`;
+    }
+
+    // Tombol login mengarah ke gateway Worker URL OAuth
+    document.getElementById('btn-login-github').addEventListener('click', () => {
+      window.location.href = `${WORKER_URL}/api/auth/github`;
+    });
+
+    // Logout
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      if (userToken) {
+        await fetch(`${WORKER_URL}/api/auth/logout`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+      }
+      localStorage.removeItem('ai_session_token');
+      setLoggedOutUI();
+      showToast('Anda telah keluar dari akun.');
+      closeMenu('sidebar-profile');
+    });
+
+    // ==========================================
+    // RIWAYAT CHAT (KV DATABASE)
+    // ==========================================
+    async function loadChatHistory() {
+      if (!userToken) return;
+
+      try {
+        const res = await fetch(`${WORKER_URL}/api/chat/history`, {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        const data = await res.json();
+        if (data.success && data.history.length > 0) {
+          chatHistory = data.history;
+          renderAllChats();
+        }
+      } catch (err) {
+        console.error("Gagal meload riwayat obrolan:", err);
+      }
+    }
+
+    async function syncChatHistoryWithCloud() {
+      if (!userToken) return;
+      try {
+        await fetch(`${WORKER_URL}/api/chat/history`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ messages: chatHistory })
+        });
+      } catch (err) {
+        console.error("Gagal mensinkronisasikan chat ke KV cloud:", err);
+      }
+    }
+
+    function renderAllChats() {
+      messagesContainer.innerHTML = '';
+      chatHistory.forEach(chat => {
+        addMessageUI(chat.text, chat.isSent, chat.extra, false);
+      });
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Hapus total riwayat
+    document.getElementById('btn-clear-chats-history').addEventListener('click', async () => {
+      if (!userToken) {
+        showToast('Login diperlukan untuk menghapus riwayat.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${WORKER_URL}/api/chat/history`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          chatHistory = [];
+          messagesContainer.innerHTML = `
+            <div class="message-row ai-row">
+              <div class="avatar avatar-ai">AI</div>
+              <div class="message-content-wrapper">
+                <div class="message-header">
+                  <span class="sender-name">Asisten AI</span>
+                </div>
+                <div class="message-body">
+                  🧹 Riwayat obrolan di cloud database berhasil dibersihkan! Mulai obrolan baru dengan saya.
+                </div>
+              </div>
+            </div>
+          `;
+          showToast('Riwayat percakapan berhasil dibersihkan.');
+          closeMenu('sidebar-profile');
+        }
+      } catch (err) {
+        showToast('Gagal membersihkan riwayat obrolan.');
+      }
+    });
+
+    // ==========================================
+    // MANAGEMENT MEDIA LIBRARY & UPLOAD (R2)
+    // ==========================================
+    async function fetchMediaLibrary() {
+      if (!userToken) return;
+
+      try {
+        const res = await fetch(`${WORKER_URL}/api/media`, {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderMediaFiles(data.files);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil media berkas R2:", err);
+      }
+    }
+
+    function renderMediaFiles(files) {
+      if (!files || files.length === 0) {
+        mediaFilesContainer.innerHTML = `<p style="text-align: center; color: #94a3b8; font-size: 13px; grid-column: 1/-1;">Belum ada berkas yang diunggah. Unggah file baru di atas.</p>`;
+        return;
+      }
+
+      mediaFilesContainer.innerHTML = '';
+      files.forEach(file => {
+        const card = document.createElement('div');
+        card.classList.add('media-card');
+
+        // Deteksi icon berdasarkan extension
+        const ext = file.name.split('.').pop().toLowerCase();
+        let iconName = 'file-text';
+        if (['jpg', 'jpeg', 'png', 'svg', 'gif'].includes(ext)) iconName = 'image';
+        else if (['js', 'ts', 'html', 'css', 'json'].includes(ext)) iconName = 'code-2';
+
+        const sizeInKB = (file.size / 1024).toFixed(1);
+
+        card.innerHTML = `
+          <div class="media-icon"><i data-lucide="${iconName}"></i></div>
+          <div class="media-name" title="${file.name}">${file.name}</div>
+          <div style="font-size: 10px; color: #64748b; margin-top: 2px;">${sizeInKB} KB</div>
+          <div class="media-actions-row">
+            <button class="btn-attach" onclick="attachFileToAI('${file.key}', '${file.name}')">Lampirkan</button>
+            <button class="btn-delete" onclick="deleteR2File('${file.key}')">Hapus</button>
+          </div>
+        `;
+        mediaFilesContainer.appendChild(card);
+      });
+
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }
+
+    // Unggah file via Modal
+    document.getElementById('btn-modal-upload-action').addEventListener('click', async () => {
+      const fileInput = document.getElementById('modal-file-selector');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        showToast('Pilih berkas terlebih dahulu!');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      await performUpload(file);
+      fileInput.value = '';
+    });
+
+    async function performUpload(file) {
+      if (!userToken) {
+        showToast('Akses upload ditutup. Anda harus login!');
+        return;
+      }
+
+      showToast(`Mengunggah ${file.name} ke Cloud R2...`);
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch(`${WORKER_URL}/api/media/upload`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${userToken}` },
+          body: formData
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showToast('File sukses disimpan di R2!');
+          fetchMediaLibrary(); // Refresh galeri R2
+        } else {
+          showToast(`Gagal: ${data.error}`);
+        }
+      } catch (err) {
+        showToast('Gagal menghubungi server upload.');
+      }
+    }
+
+    // Menghapus file di R2
+    window.deleteR2File = async function(key) {
+      if (!userToken || !confirm('Apakah Anda yakin ingin menghapus berkas ini dari cloud storage?')) return;
+
+      try {
+        const res = await fetch(`${WORKER_URL}/api/media?key=${encodeURIComponent(key)}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Berkas berhasil dihapus.');
+          fetchMediaLibrary();
+        }
+      } catch (err) {
+        showToast('Gagal menghapus berkas.');
+      }
+    };
+
+    // ==========================================
+    // FITUR ATTACH FILE & DIRECT ANALYZE FILE
+    // ==========================================
+    window.attachFileToAI = async function(key, name) {
+      if (!userToken) return;
+      showToast('Mengambil data berkas untuk dilampirkan...');
+
+      try {
+        const res = await fetch(`${WORKER_URL}/api/media/download?key=${encodeURIComponent(key)}`, {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+
+        // Simpan isi konten berkas (Mendukung file teks)
+        const text = await res.text();
+        attachedFileContent = text;
+        attachedFileName = name;
+
+        // Tampilkan bar berkas terlampir di dekat input
+        document.getElementById('attached-file-bar').style.display = 'flex';
+        document.getElementById('attached-file-name').innerText = name;
+
+        closeModal('media-library-modal');
+        showToast(`File ${name} siap dianalisa AI!`);
+      } catch (err) {
+        showToast('Gagal membaca isi konten file.');
+      }
+    };
+
+    window.detachFile = function() {
+      attachedFileContent = null;
+      attachedFileName = "";
+      document.getElementById('attached-file-bar').style.display = 'none';
+      showToast('Konteks lampiran berkas dilepas.');
+    };
+
+    // Direct Upload via Paperclip icon di input bar
+    window.triggerFileUpload = function() {
+      if (!userToken) {
+        showToast('Akses upload ditutup. Anda harus login via GitHub.');
+        return;
+      }
+      document.getElementById('direct-file-input').click();
+    };
+
+    window.handleDirectUpload = async function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Unggah ke R2
+      await performUpload(file);
+
+      // Otomatis lampirkan setelah berhasil
+      const objectKey = `${currentUser.uid}/${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
+      attachFileToAI(objectKey, file.name);
+
+      event.target.value = '';
+    };
+
+    // ==========================================
+    // SISTEM UTAMA CHAT & INTEGRASI CORE
+    // ==========================================
+    function getShortModelName(modelPath) {
+      if (!modelPath) return '';
+      const lower = modelPath.toLowerCase();
+      if (lower.includes('qwen') && lower.includes('coder')) {
+        return 'qwen-coder';
+      }
+      if (lower.includes('mistral') && lower.includes('small')) {
+        return 'mistral-small';
+      }
+      return modelPath.split('/').pop();
+    }
+
+    function secureCopy(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Teks berhasil disalin ke clipboard!');
+      } catch (err) {
+        showToast('Gagal menyalin teks.');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    window.copyCodeBlock = function(buttonElement) {
+      const preElement = buttonElement.closest('.code-block-wrapper').querySelector('pre');
+      if (preElement) {
+        secureCopy(preElement.innerText);
+
+        const textSpan = buttonElement.querySelector('span');
+        buttonElement.style.color = '#a3e635';
+
+        if (textSpan) {
+          textSpan.innerText = 'Tersalin!';
+        }
+
+        setTimeout(() => {
+          if (textSpan) {
+            textSpan.innerText = 'Salin';
+          }
+          buttonElement.style.color = '';
+        }, 2000);
+      }
+    };
+
+    window.copyTextMessage = function(buttonElement) {
+      const messageBody = buttonElement.closest('.message-content-wrapper').querySelector('.message-body');
+      if (messageBody) {
+        secureCopy(messageBody.innerText);
+      }
+    };
+
+    function addMessageUI(text, isSent, extra = null, saveToState = true) {
+      const rowDiv = document.createElement('div');
+      rowDiv.classList.add('message-row');
+      rowDiv.classList.add(isSent ? 'user-row' : 'ai-row');
+
+      const avatarDiv = document.createElement('div');
+      avatarDiv.classList.add('avatar');
+      avatarDiv.classList.add(isSent ? 'avatar-user' : 'avatar-ai');
+
+      if (isSent) {
+        if (currentUser && currentUser.avatar) {
+          avatarDiv.style.backgroundImage = `url('${currentUser.avatar}')`;
+          avatarDiv.innerText = '';
+        } else {
+          avatarDiv.innerText = 'UD';
+        }
+      } else {
+        avatarDiv.innerText = 'AI';
+      }
+      rowDiv.appendChild(avatarDiv);
+
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('message-content-wrapper');
+
+      const header = document.createElement('div');
+      header.classList.add('message-header');
+
+      const name = document.createElement('span');
+      name.classList.add('sender-name');
+      name.innerText = isSent ? (currentUser ? currentUser.name : 'Anda') : 'Asisten AI';
+      header.appendChild(name);
+
+      if (!isSent && extra && (extra.intent || extra.model)) {
+        const badge = document.createElement('span');
+        badge.classList.add('meta-badge');
+        const shortModel = getShortModelName(extra.model);
+        badge.innerText = `${extra.intent ? `🎯 ${extra.intent}` : ''} ${shortModel ? `🧠 ${shortModel}` : ''}`;
+        header.appendChild(badge);
+      }
+      wrapper.appendChild(header);
+
+      const body = document.createElement('div');
+      body.classList.add('message-body');
+      if (!isSent) {
+        body.innerHTML = renderMarkdown(text);
+      } else {
+        body.innerText = text;
+        // Tampilkan indikator jika berkas terlampir di bubble user
+        if (extra && extra.attachedFile) {
+          const pill = document.createElement('div');
+          pill.classList.add('attached-context-pill');
+          pill.innerHTML = `<i data-lucide="file-check" style="width: 14px; height: 14px;"></i> Terlampir: ${extra.attachedFile}`;
+          body.appendChild(pill);
+        }
+      }
+      wrapper.appendChild(body);
+
+      if (!isSent && extra && (extra.intent === 'code' || extra.intent === 'ui')) {
+        const actions = document.createElement('div');
+        actions.classList.add('message-actions');
+        actions.innerHTML = `
+          <button class="text-action-btn" onclick="copyTextMessage(this)">
+            <i data-lucide="copy"></i> Salin Semua Teks
+          </button>
+        `;
+        wrapper.appendChild(actions);
+      }
+
+      rowDiv.appendChild(wrapper);
+      messagesContainer.appendChild(rowDiv);
+
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Simpan data state untuk sync KV cloud
+      if (saveToState) {
+        chatHistory.push({ text, isSent, extra });
+        syncChatHistoryWithCloud();
+      }
+    }
+
+    function showTypingIndicator() {
+      const rowDiv = document.createElement('div');
+      rowDiv.id = 'typingIndicator';
+      rowDiv.classList.add('message-row', 'ai-row');
+      rowDiv.innerHTML = `
+        <div class="avatar avatar-ai">AI</div>
+        <div class="message-content-wrapper">
+          <div class="message-header">
+            <span class="sender-name">Asisten AI</span>
+          </div>
+          <div class="loading-container">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      `;
+      messagesContainer.appendChild(rowDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+    }
+
+    async function sendToAI(userMessage) {
+      if (!userMessage.trim() && !attachedFileContent) return;
+      if (isLoading) return;
+
+      const modelSelect = document.getElementById('select-ai-model');
+      const selectedModel = modelSelect ? modelSelect.value : 'auto';
+
+      const extraPayload = {};
+      if (attachedFileContent) {
+        extraPayload.attachedFile = attachedFileName;
+      }
+
+      // Tampilkan chat pengguna di UI
+      addMessageUI(userMessage, true, extraPayload);
+      messageInput.value = '';
+      messageInput.setAttribute('value', '');
+
+      isLoading = true;
+      if (sendBtn) sendBtn.disabled = true;
+      showTypingIndicator();
+
+      try {
+        const requestPayload = {
+          message: userMessage,
+          fileContext: attachedFileContent // Terkirim jika ada file dilampirkan
+        };
+
+        // Jika user memilih model default secara manual (bukan auto), bisa kita beri informasi tambahan di payload
+        if (selectedModel !== 'auto') {
+          requestPayload.forcedModel = selectedModel;
+        }
+
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': userToken ? `Bearer ${userToken}` : ''
+          },
+          body: JSON.stringify(requestPayload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || `HTTP ${response.status}`);
+        }
+
+        const aiText = data.response || '(Respon kosong)';
+        const extraInfo = {
+          intent: data.intent,
+          model: data.model
+        };
+
+        hideTypingIndicator();
+        addMessageUI(aiText, false, extraInfo);
+
+        // Lepas lampiran otomatis setelah satu kali kirim/analisa agar tidak terus-menerus terkirim
+        if (attachedFileContent) {
+          detachFile();
+        }
+
+      } catch (err) {
+        console.error(err);
+        hideTypingIndicator();
+        addMessageUI(`❌ Gagal terhubung ke AI (${err.message}). Periksa konektivitas atau URL Worker Anda.`, false);
+      } finally {
+        isLoading = false;
+        if (sendBtn) sendBtn.disabled = false;
+        if (messageInput && typeof messageInput.setFocus === 'function') {
+          messageInput.setFocus();
+        }
+      }
+    }
+
+    // Event Listeners
+    if (sendBtn) {
+      sendBtn.addEventListener('click', () => {
+        const text = messageInput.value ? messageInput.value.trim() : '';
+        sendToAI(text);
+      });
+    }
+
+    if (messageInput) {
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (sendBtn) sendBtn.click();
+        }
+      });
+    }
+
+    // Inisialisasi awal
+    window.addEventListener('DOMContentLoaded', () => {
+      checkUserSession();
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    });
+  </script>
 </body>
 </html>
