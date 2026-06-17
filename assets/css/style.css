@@ -87,24 +87,31 @@
       padding-right: 24px;
     }
 
-    /* Avatar */
+    /* Avatar Sizing & Visual */
     .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%; /* Membuat avatar melingkar sempurna agar modern */
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      font-weight: bold;
-      font-size: 14px;
+      transition: all 0.3s ease;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* Sizing khusus untuk ikon di dalam avatar */
+    .avatar i {
+      width: 20px;
+      height: 20px;
     }
 
     .avatar-user {
       background-color: #e0e7ff;
       color: #4f46e5;
-      background-size: cover;
-      background-position: center;
+      border: 1px solid #c7d2fe;
     }
 
     .avatar-ai {
@@ -425,6 +432,18 @@
       border-radius: 16px;
       margin: 16px;
       text-align: center;
+    }
+
+    /* Animasi Putar (Spinning) untuk Loader */
+    .spin-animation {
+      animation: spin 1.8s linear infinite;
+      display: inline-block;
+      color: #4f46e5;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     /* Loading Indicator */
